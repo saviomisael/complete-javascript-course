@@ -24,12 +24,15 @@ body {
   display: flex;
   flex-flow: column;
   align-items: center;
+  padding: 1rem;
 }
 
 .countries {
   /* margin-bottom: 8rem; */
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 
+  padding: 1rem;
   font-size: 2rem;
   opacity: 0;
   transition: opacity 1s;
@@ -43,6 +46,13 @@ body {
   border-radius: 0.7rem;
   margin: 0 3rem;
   /* overflow: hidden; */
+}
+
+.error-message,
+.country:first-child {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  justify-self: center;
 }
 
 .neighbour::before {
@@ -70,7 +80,7 @@ body {
   background-color: #eee;
   border-top-left-radius: 0.7rem;
   border-top-right-radius: 0.7rem;
-  border: 0.2rem solid #000;
+  border-bottom: 0.1rem solid #444;
 }
 
 .country__data {

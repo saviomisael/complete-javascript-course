@@ -93,10 +93,44 @@ const formatPopulation = function (population) {
   return population;
 };
 
+const getPosition = () => {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+const whereAmI = async function () {
+  try {
+    const {
+      coords: { latitude, longitude },
+    } = await getPosition();
+
+    const request = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
+    );
+
+    if (!request.ok) throw new Error('Too many requests');
+
+    const {
+      address: { country, city },
+    } = await request.json();
+
+    console.log(`You are in ${city}, ${country}`);
+
+    getCountryData(country);
+  } catch (error) {
+    console.error(`${error.message}`);
+  }
+};
+
 btn.addEventListener('click', () => {
   // getCountryData('saasassa');
-  getCountryData('brasil');
+  whereAmI();
 });
+
+// (async () => {
+//   await whereAmI();
+// })();
 
 // Coding Challenge #1
 // const whereAmI = async function (latitude, longitude) {
@@ -131,19 +165,161 @@ btn.addEventListener('click', () => {
 // });
 // console.log('Test end');
 
-const lotteryPromise = new Promise((resolve, reject) => {
-  console.log('Lottery draw is happening');
+// const lotteryPromise = new Promise((resolve, reject) => {
+//   console.log('Lottery draw is happening');
 
-  setTimeout(() => {
-    if (Math.random() >= 0.5) {
-      resolve('You WIN');
-    } else {
-      reject(new Error('You lost your money'));
-    }
-  }, 2000);
-});
+//   setTimeout(() => {
+//     if (Math.random() >= 0.5) {
+//       resolve('You WIN');
+//     } else {
+//       reject(new Error('You lost your money'));
+//     }
+//   }, 2000);
+// });
 
-lotteryPromise.then(x => console.log(x)).catch(err => console.error(err));
+// lotteryPromise.then(x => console.log(x)).catch(err => console.error(err));
+
+// const sleep = seconds => {
+//   return new Promise(resolve => {
+//     setTimeout(resolve, 1000 * seconds);
+//   });
+// };
+
+// sleep(3)
+//   .then(() => {
+//     console.log('I waited for 3 seconds');
+
+//     return sleep(1);
+//   })
+//   .then(() => console.log('I waited for 1 second.'));
+
+// navigator.geolocation.getCurrentPosition(
+//   position => console.log(position),
+//   error => console.error(error)
+// );
+
+// Promisifying
+// const getPosition = () => {
+//   return new Promise((resolve, reject) => {
+//     navigator.geolocation.getCurrentPosition(resolve, reject);
+//   });
+// };
+
+// // getPosition().then(position => console.log(position));
+
+// const whereAmI = async function () {
+//   try {
+//     const {
+//       coords: { latitude, longitude },
+//     } = await getPosition();
+
+//     const request = await fetch(
+//       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
+//     );
+
+//     if (!request.ok) throw new Error('Too many requests');
+
+//     const {
+//       address: { country, city },
+//     } = await request.json();
+
+//     console.log(`You are in ${city}, ${country}`);
+
+//     getCountryData(country);
+//   } catch (error) {
+//     console.error(`${error.message}`);
+//   }
+// };
+
+// btn.addEventListener('click', () => {
+//   whereAmI();
+// });
+
+// Coding Challenge #2
+
+// const createImage = function (imgPath) {
+//   return new Promise((resolve, reject) => {
+//     const image = document.createElement('img');
+//     image.src = imgPath;
+
+//     image.addEventListener('load', () => {
+//       document.querySelector('.images').append(image);
+//       resolve(image);
+//     });
+
+//     image.addEventListener('error', e => {
+//       reject(new Error(`Image ${e.target.src} not found`));
+//     });
+//   });
+// };
+
+// const sleep = seconds => {
+//   return new Promise(resolve => {
+//     setTimeout(resolve, 1000 * seconds);
+//   });
+// };
+
+// const hideImage = async image => {
+//   await sleep(2);
+
+//   image.style.display = 'none';
+// };
+
+// createImage('/img/img-1.jpg')
+//   .then(hideImage)
+//   .then(() => {
+//     return createImage('/img/img-2.jpg');
+//   })
+//   .then(hideImage);
+
+// const get3Countries = async (country1, country2, country3) => {
+//   try {
+//     // const [dataCountry1] = await getJSON(
+//     //   `https://restcountries.com/v3.1/name/${country1}`
+//     // );
+
+//     // const [dataCountry2] = await getJSON(
+//     //   `https://restcountries.com/v3.1/name/${country2}`
+//     // );
+
+//     // const [dataCountry3] = await getJSON(
+//     //   `https://restcountries.com/v3.1/name/${country3}`
+//     // );
+
+//     const [[dataCountry1], [dataCountry2], [dataCountry3]] = await Promise.all([
+//       getJSON(`https://restcountries.com/v3.1/name/${country1}`),
+//       getJSON(`https://restcountries.com/v3.1/name/${country2}`),
+//       getJSON(`https://restcountries.com/v3.1/name/${country3}`),
+//     ]);
+
+//     console.log(
+//       dataCountry1.capital,
+//       dataCountry2.capital,
+//       dataCountry3.capital
+//     );
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+// get3Countries('portugal', 'canada', 'tanzania');
+
+// Coding challenge #3
+const createImage = function (imgPath) {
+  return new Promise((resolve, reject) => {
+    const image = document.createElement('img');
+    image.src = imgPath;
+
+    image.addEventListener('load', () => {
+      document.querySelector('.images').append(image);
+      resolve(image);
+    });
+
+    image.addEventListener('error', e => {
+      reject(new Error(`Image ${e.target.src} not found`));
+    });
+  });
+};
 
 const sleep = seconds => {
   return new Promise(resolve => {
@@ -151,10 +327,32 @@ const sleep = seconds => {
   });
 };
 
-sleep(3)
-  .then(() => {
-    console.log('I waited for 3 seconds');
+const hideImage = async image => {
+  await sleep(2);
 
-    return sleep(1);
-  })
-  .then(() => console.log('I waited for 1 second.'));
+  image.style.display = 'none';
+};
+
+const loadAll = async (...imgArr) => {
+  const imgs = imgArr.map(async x => await createImage(x));
+
+  const imagesPromises = await Promise.allSettled(imgs);
+
+  imagesPromises.forEach(x => {
+    if (x.value) x.value.classList.add('parallel');
+  });
+};
+
+loadAll('/img/img-1.jpg', '/img/img-2.jpg', '/img/img-3.jpg');
+
+// const loadImageAndHide = async img => {
+//   const image = await createImage(img);
+
+//   await hideImage(image);
+// };
+
+// (async () => {
+//   await loadImageAndHide('/img/img-1.jpg');
+
+//   await loadImageAndHide('/img/img-2.jpg');
+// })();

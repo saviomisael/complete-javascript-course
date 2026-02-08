@@ -1,0 +1,15 @@
+{
+  "name": "forkify",
+  "version": "1.0.0",
+  "description": "Course's project",
+  "license": "ISC",
+  "author": "Savio Moreira",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html --dist-dir build --public-url ./"
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.16.4",
+    "parcel": "^2.16.4"
+  }
+}

@@ -1,4 +1,5 @@
-const apiKey = 'af9c2353-950b-4713-9cd6-25734711b1c8';
+import { API_KEY, API_URL } from './config.js';
+import { getJSON } from './helpers.js';
 
 export const state = {
   recipe: {},
@@ -6,12 +7,7 @@ export const state = {
 
 export const loadRecipe = async function (id) {
   try {
-    const res = await fetch(
-      `https://forkify-api.jonas.io/api/v2/recipes/${id}?key=${apiKey}`,
-    );
-    const data = await res.json();
-    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-
+    const data = await getJSON(`${API_URL}/${id}?key=${API_KEY}`);
     let { recipe } = data.data;
 
     state.recipe = {
@@ -26,6 +22,5 @@ export const loadRecipe = async function (id) {
     };
   } catch (err) {
     console.error(err);
-    alert(err.message);
   }
 };
